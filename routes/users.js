@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware')
+const multer = require('multer')
+const path = require('path')
+const upload = multer({ dest: path.join(__dirname, '../public/upload') })
 
 const User = require('../models/mongoose/user')
     /* GET users listing. */
@@ -23,7 +27,9 @@ router.route('/')
         (async() => {
             let users = await User.createNewUser({
                 age: req.body.age,
-                name: req.body.name
+                name: req.body.name,
+                password: req.body.password,
+                phoneNum: req.body.phoneNum
             })
             return {
                 code: 0,
@@ -53,12 +59,13 @@ router.route('/:id')
                 next(e)
             })
     })
-    .patch((req, res) => {
+    .patch(auth(), upload.single('avatar'), (req, res, next) => {
         (async() => {
-            let user = await User.updateUserById(req.params.id, {
-                name: req.body.name,
-                age: req.body.age
-            })
+            let update = {}
+            if (req.body.name) update.name = req.body.name
+            if (req.body.age) update.age = req.body.age
+            console.log(req.file)
+            let user = await User.updateUserById(req.params.id, update)
             return {
                 code: 0,
                 user: user
