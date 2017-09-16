@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 const schema = mongoose.Schema
-
 const replySchema = new schema({
-    creator: Schema.type.ObjectId,
-    content: string
+    creator: schema.Types.ObjectId,
+    content: String
 })
 
 const topicSchema = new schema({

@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 router.post('/login', (req, res, next) => {
     (async() => {
         const user = await User.login(req.body.phoneNum, req.body.password)
-        const token = JWT.sign({ _id: user._id, iat: Date.now(), expire: Date.now() + 20000 }, JWT_SECRET)
+        const token = JWT.sign({ _id: user._id, iat: Date.now(), expire: Date.now() + 1000 * 60 * 60 * 24 }, JWT_SECRET)
         return ({
             code: 0,
             data: {
@@ -20,12 +20,11 @@ router.post('/login', (req, res, next) => {
             }
         })
     })()
-    .then(r = {
-
+    .then(r => {
+            res.json(r)
         })
         .catch(e => {
             next(e)
         })
-    return user
 })
 module.exports = router;

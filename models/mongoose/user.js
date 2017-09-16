@@ -9,23 +9,21 @@ const UserSchema = new schema({
     name: { type: String, require: true },
     age: Number,
     password: String,
-    phoneMum: String,
+    phoneNum: String,
     avatar: String
 })
 
 UserSchema.index({ name: 1 }, { unique: true })
 const UserModel = mongoose.model('user', UserSchema)
-
 const DEFAULT_PROJECTION = { password: 0, phoneNum: 0 }
 
 async function createNewUser(params) {
-    const user = new UserModel({ name: params.name, age: params.age })
-    let password = await pbkdf2Async(res.body.password, SALT, 100000, 512, 'sha512')
+    let password = await pbkdf2Async(params.password, SALT, 100000, 512, 'sha512')
         .then()
         .catch(e => {
             throw new Error('Internal error')
         })
-
+    const user = new UserModel({ name: params.name, age: params.age, password: password, phoneNum: params.phoneNum })
     await user.save()
         .catch(e => {
             switch (e.code) {
@@ -67,13 +65,13 @@ async function updateUserById(userId, update) {
         })
 }
 async function login(phoneNum, password) {
-    const password = await pbkdf2Async(password, SALT, 10000, 512, 'sha512')
+    let pwd = await pbkdf2Async(password, SALT, 100000, 512, 'sha512')
         .then(r => r.toString())
         .catch(e => {
             console.log(e)
             throw new Error('Internal Error')
         })
-    let user = await UserModel.findOne({ phoneNum: phoneNum, password: password })
+    let user = await UserModel.findOne({ phoneNum: phoneNum, password: pwd })
         .catch(e => {
             console.log(`error logging in with phonenumber ${phoneNum}`, { error: e.stack || e })
         })
