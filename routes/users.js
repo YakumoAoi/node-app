@@ -5,11 +5,11 @@ const auth = require('../middleware')
 const multer = require('multer')
 const path = require('path')
 const upload = multer({ dest: path.join(__dirname, '../public/upload/') })
-console.log(path.join(__dirname, '../public/upload'))
+const HOST = process.env.NODE_ENV === 'production' ? 'http://some.host/' : 'http://localhost:8082'
 router.route('/')
     .get((req, res, next) => {
         (async() => {
-            let users = await User.getUsers()
+            let users = await User.getUser()
             return {
                 code: 0,
                 users: users,
@@ -24,7 +24,7 @@ router.route('/')
     })
     .post((req, res, next) => {
         (async() => {
-            let user = await User.createANewUser({
+            let user = await User.createNewUser({
                 name: req.body.name,
                 age: req.body.age,
                 password: req.body.password,
@@ -66,8 +66,9 @@ router.route('/:id')
             let update = {}
             if (req.body.name) update.name = req.body.name
             if (req.body.age) update.age = req.body.age
+            update.avatar = `/upload/${req.file.filename}`
             let user = await User.updateUserById(req.params.id, update)
-            console.log(req.file)
+            user.avatar = `${HOST}${user.avatar}`
             return {
                 code: 0,
                 user: user,

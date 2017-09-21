@@ -4,6 +4,8 @@ const crypto = require('crypto')
 const bluebird = require('bluebird')
 const pbkdf2Async = bluebird.promisify(crypto.pbkdf2)
 const SALT = require('../../ciphers').PASSWORD_SALT
+const Errors = require('../../error')
+const logger = require('../../logger').logger
 
 const UserSchema = new schema({
     name: { type: String, require: true },
@@ -24,15 +26,15 @@ async function createNewUser(params) {
             throw new Error('Internal error')
         })
     const user = new UserModel({ name: params.name, age: params.age, password: password, phoneNum: params.phoneNum })
-    await user.save()
+    let created = await user.save()
         .catch(e => {
+            logger.error('error creating user', e)
             switch (e.code) {
                 case 11000:
-                    throw new Error('This username is exist')
+                    throw new Errors.DuplicatedNameError(params.name)
                     break
                 default:
-                    throw new Error(`error create user ${params.name}`)
-                    console.log(e)
+                    throw new Errors.ValidationError('user', `error create user${params.name}`)
             }
         })
     return user
@@ -69,7 +71,7 @@ async function login(phoneNum, password) {
         .then(r => r.toString())
         .catch(e => {
             console.log(e)
-            throw new Error('Internal Error')
+            throw new Errors.InternalError('login', 'Internal Error')
         })
     let user = await UserModel.findOne({ phoneNum: phoneNum, password: pwd })
         .catch(e => {
@@ -79,6 +81,9 @@ async function login(phoneNum, password) {
         throw new Error('wrong password or wrong phoneNumber')
     }
     return user
+}
+async function incrPoints(userId, points) {
+
 }
 module.exports = {
     model: UserModel,
