@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const uri = 'mongodb://localhost:27017/node-app'
+require('fs')
 
 mongoose.Promise = global.Promise
 mongoose.connect(uri, { useMongoClient: true })

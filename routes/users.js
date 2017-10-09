@@ -43,7 +43,6 @@ router.route('/')
             })
     })
 
-// localhost:8082/user/laoyang
 router.route('/:id')
     .get((req, res, next) => {
         (async() => {
@@ -60,7 +59,6 @@ router.route('/:id')
                 next(e)
             })
     })
-    // avatar /tmp/:userId/date/hash
     .patch(auth(), upload.single('avatar'), (req, res, next) => {
         (async() => {
             let update = {}
