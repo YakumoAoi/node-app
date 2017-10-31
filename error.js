@@ -36,6 +36,20 @@ class DuplicatedNameError extends ValidationError {
     }
 }
 
+class AlreadyLikedError extends BasehttpError {
+    constructor(msg) {
+        const message = `user ${userId} already liked ${attachId} content,but called like`
+        super(`already liked error:${message}`, 400, 200002, '已经点过赞了不能再点赞了哦')
+    }
+}
+
+class NeverLikedError extends BasehttpError {
+    constructor(msg) {
+        const message = `user ${userId} never liked ${attachId} content,but called dislike`
+        super(`never liked error:${message}`, 400, 200003, '还没有点赞，不能取消点赞哦')
+    }
+}
+
 module.exports = {
     BasehttpError,
     ValidationError,

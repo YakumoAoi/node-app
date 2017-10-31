@@ -8,7 +8,7 @@ const index = require('./routes/index');
 const users = require('./routes/users');
 const topicRouter = require('./routes/topic')
 const Errors = require('./error')
-const logger = require('./logger').logger
+const logger = require('./util/logger').logger
 
 const app = express();
 require('./service/mongoose')

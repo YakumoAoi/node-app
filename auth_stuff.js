@@ -2,7 +2,7 @@ const JWT = require('jsonwebtoken')
 const SECRET = 'this is a test'
 const crypto = require('crypto')
 const util = require('util')
-const bulebird = require('bluebird')
+const bluebird = require('bluebird')
 
 let token = JWT.sign({
     userId: '5adfas83ddSD',
@@ -14,7 +14,6 @@ let verified = JWT.verify(token, SECRET)
 console.log(verified)
 
 let pbkdf2Sync = bluebird.promisify(crypto.pbkdf2)
-bluebird.promisify(a)
 
 return (async() => {
         return crypto.pbkdf2Sync('password', 'salt', 10000, 125, 'sha512')

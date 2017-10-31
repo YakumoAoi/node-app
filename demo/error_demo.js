@@ -6,9 +6,10 @@ class BaseHTTPError extends Error {
         this.httpMsg = httpMsg
     }
 }
+
 class ValidationError extends BaseHTTPError {
     constructor(path, reason) {
-        const OPCode = 1000001
+        const OPCode = 2000001
         const httpCode = 400
         super(`error validating param: ${path}, reason: ${reason}`, OPCode, httpCode, '参数错误，请检查后重试')
     }

@@ -1,4 +1,4 @@
-const logger = require('./logger').reqLogger
+const logger = require('../util/logger').reqLogger
 
 function requestLogger(req, res, next) {
     const content = {

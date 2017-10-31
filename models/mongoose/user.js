@@ -5,14 +5,15 @@ const bluebird = require('bluebird')
 const pbkdf2Async = bluebird.promisify(crypto.pbkdf2)
 const SALT = require('../../ciphers').PASSWORD_SALT
 const Errors = require('../../error')
-const logger = require('../../logger').logger
+const logger = require('../../util/logger').logger
 
 const UserSchema = new schema({
     name: { type: String, require: true },
     age: Number,
     password: String,
     phoneNum: String,
-    avatar: String
+    avatar: String,
+    points: Number
 })
 
 UserSchema.index({ name: 1 }, { unique: true })
@@ -83,7 +84,8 @@ async function login(phoneNum, password) {
     return user
 }
 async function incrPoints(userId, points) {
-
+    const user = await UserModel.findOneAndUpdate({ _id: userId }, { $inc: { points: points } }, { new: true, field: { points: 1 } })
+    return user.points
 }
 module.exports = {
     model: UserModel,

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/mongoose/user')
-const auth = require('../middleware')
+const auth = require('../middleware/auth_user')
 const multer = require('multer')
 const path = require('path')
 const upload = multer({ dest: path.join(__dirname, '../public/upload/') })

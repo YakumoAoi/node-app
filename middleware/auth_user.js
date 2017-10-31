@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken')
-const JWT_SECRET = require('./ciphers').JWT_SECRET
+const JWT_SECRET = require('../ciphers').JWT_SECRET
 
 module.exports = function(options) {
     return function(req, res, next) {
