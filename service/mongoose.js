@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const uri = 'mongodb://localhost:27100,localhost:27101,localhost:27102/node_app?replicaSet=mg_replica_set'
+const uri = 'mongodb://localhost:27100'
 
 mongoose.Promise = global.Promise
 
