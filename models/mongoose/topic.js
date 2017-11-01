@@ -1,14 +1,18 @@
 const mongoose = require('mongoose')
 const schema = mongoose.Schema
+
 const replySchema = new schema({
     creator: schema.Types.ObjectId,
-    content: String
+    content: { type: String, require: true },
+    likes: { type: Number, default: 0 }
+
 })
 
 const topicSchema = new schema({
     creator: { type: String, require: true },
-    title: String,
+    title: { type: String, require: true },
     content: String,
+    likes: { type: Number, default: 0 },
     replyList: [replySchema]
 })
 
@@ -27,6 +31,7 @@ async function createNewTopic(params) {
         })
     return topic
 }
+
 async function getTopic(params = { page: 0, pageSize: 10 }) {
     let result = topicModel.find({})
     result.skip(params.page * params.pageSize)
@@ -37,6 +42,7 @@ async function getTopic(params = { page: 0, pageSize: 10 }) {
             console.log(e)
         })
 }
+
 async function getTopicById(topicId) {
     return await topicModel.find({ _id: topicId })
         .catch(e => {
@@ -52,6 +58,7 @@ async function updateTopicById(topicId, update) {
             console.log(e)
         })
 }
+
 async function replyATopic(params) {
     if (!params.creator) throw new Error('fail to get user')
     if (!params.content) throw new Error('the content is required in reply')
@@ -61,6 +68,33 @@ async function replyATopic(params) {
             console.log(e)
         })
 }
+
+async function likeTopic(topicId) {
+    let topic = await topicModel.findOneAndUpdate({ _id: ObjectId }, { $inc: { likes: 1 } }, { field: { likes: 1 } })
+    return topic.likes
+}
+
+async function dislikeTopic(topicId) {
+    let topic = await topicModel.findOneAndUpdate({ _id: ObjectId }, { $inc: { likes: 0 } }, { field: { likes: 0 } })
+    return topic.likes
+}
+
+async function likereply(topicId, replyId) {
+    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { "replyList._id": 1, "replyList.likes": 1 })
+    let reply = topic.replyList.find(e => e._id.toString() === replyId.toString())
+    reply += 1
+    await topic.save()
+    return reply.likes
+}
+
+async function dislikereply(topicId, replyId) {
+    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { "replyList._id": 1, "replyList.likes": 1 })
+    let reply = topic.replyList.find(e => e._id.toString() === replyId.toString())
+    reply -= 1
+    await topic.save()
+    return reply.likes
+}
+
 module.exports = {
     model: topicModel,
     createNewTopic,

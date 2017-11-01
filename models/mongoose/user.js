@@ -17,15 +17,20 @@ const UserSchema = new schema({
 })
 
 UserSchema.index({ name: 1 }, { unique: true })
+
+UserSchema.index({ name: 1, age: 1 })
+
 const UserModel = mongoose.model('user', UserSchema)
 const DEFAULT_PROJECTION = { password: 0, phoneNum: 0 }
 
 async function createNewUser(params) {
-    let password = await pbkdf2Async(params.password, SALT, 100000, 512, 'sha512')
-        .then()
-        .catch(e => {
-            throw new Error('Internal error')
-        })
+    if (params.password) {
+        let password = await pbkdf2Async(params.password, SALT, 100000, 512, 'sha512')
+            .then()
+            .catch(e => {
+                throw new Error('Internal error')
+            })
+    }
     const user = new UserModel({ name: params.name, age: params.age, password: password, phoneNum: params.phoneNum })
     let created = await user.save()
         .catch(e => {
@@ -36,10 +41,12 @@ async function createNewUser(params) {
                     break
                 default:
                     throw new Errors.ValidationError('user', `error create user${params.name}`)
+                    break
             }
         })
     return user
 }
+
 async function getUser(params = { page: 0, pageSize: 10 }) {
     let flow = UserModel.find({})
     flow.select(DEFAULT_PROJECTION)
@@ -50,8 +57,8 @@ async function getUser(params = { page: 0, pageSize: 10 }) {
             console.log(e)
             throw new Error('error getting user from db')
         })
-
 }
+
 async function getUserById(userId) {
     console.log(userId)
     return await UserModel.find({ _id: userId })
