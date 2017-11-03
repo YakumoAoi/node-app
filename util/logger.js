@@ -27,7 +27,6 @@ const reqLogger = new winston.Logger({
             level: 'info'
         })
     ]
-
 })
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {

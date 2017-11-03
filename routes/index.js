@@ -4,7 +4,9 @@ const User = require('../models/mongoose/user')
 const JWT = require('jsonwebtoken')
 const JWT_SECRET = require('../ciphers').JWT_SECRET
 const Errors = require('../error')
-    /* GET home page. */
+const PointService = require('../service/point_service')
+const response = require('../util/reponse')
+
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });
 });
@@ -27,6 +29,23 @@ router.post('/login', (req, res, next) => {
     })()
     .then(r => {
             res.json(r)
+        })
+        .catch(e => {
+            next(e)
+        })
+})
+
+router.get('/pointRank', (req, res, next) => {
+    (async() => {
+        const users = await PointService.getPointRankBrief()
+        return {
+            code: 0,
+            users,
+        }
+    })()
+    .then(r => {
+            res.data = r
+            response(req, res)
         })
         .catch(e => {
             next(e)

@@ -79,18 +79,18 @@ async function dislikeTopic(topicId) {
     return topic.likes
 }
 
-async function likereply(topicId, replyId) {
-    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { "replyList._id": 1, "replyList.likes": 1 })
+async function likeReply(replyId) {
+    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { 'replyList._id': 1, "replyList.likes": 1 })
     let reply = topic.replyList.find(e => e._id.toString() === replyId.toString())
-    reply += 1
+    reply.likes += 1
     await topic.save()
     return reply.likes
 }
 
-async function dislikereply(topicId, replyId) {
-    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { "replyList._id": 1, "replyList.likes": 1 })
+async function dislikeReply(replyId) {
+    let topic = await topicModel.findOne({ 'replyList._id': replyId }, { 'replyList._id': 1, "replyList.likes": 1 })
     let reply = topic.replyList.find(e => e._id.toString() === replyId.toString())
-    reply -= 1
+    reply.likes -= 1
     await topic.save()
     return reply.likes
 }
@@ -101,5 +101,9 @@ module.exports = {
     getTopic,
     getTopicById,
     updateTopicById,
-    replyATopic
+    replyATopic,
+    likeTopic,
+    dislikeTopic,
+    dislikeReply,
+    likeReply
 }

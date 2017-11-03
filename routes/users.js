@@ -5,7 +5,7 @@ const auth = require('../middleware/auth_user')
 const multer = require('multer')
 const path = require('path')
 const upload = multer({ dest: path.join(__dirname, '../public/upload/') })
-const HOST = process.env.NODE_ENV === 'production' ? 'http://some.host/' : 'http://localhost:8082'
+const HOST = process.env.NODE_ENV === 'production' ? 'http://some.host/' : 'http://localhost:80'
 router.route('/')
     .get((req, res, next) => {
         (async() => {
@@ -67,6 +67,7 @@ router.route('/:id')
             update.avatar = `/upload/${req.file.filename}`
             let user = await User.updateUserById(req.params.id, update)
             user.avatar = `${HOST}${user.avatar}`
+            console.log(user.avatar)
             return {
                 code: 0,
                 user: user,

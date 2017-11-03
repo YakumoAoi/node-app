@@ -5,4 +5,4 @@ let redis = new redis({
     port: 6379
 })
 
-redis.set('apple', 'bad')
+module.exports = redis

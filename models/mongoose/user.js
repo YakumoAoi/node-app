@@ -31,7 +31,12 @@ async function createNewUser(params) {
                 throw new Error('Internal error')
             })
     }
-    const user = new UserModel({ name: params.name, age: params.age, password: password, phoneNum: params.phoneNum })
+    const user = new UserModel({
+        name: params.name,
+        age: params.age,
+        password: params.password,
+        phoneNum: params.phoneNum
+    })
     let created = await user.save()
         .catch(e => {
             logger.error('error creating user', e)

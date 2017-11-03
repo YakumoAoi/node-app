@@ -3,7 +3,10 @@ const router = express.Router();
 
 const User = require('../models/mongoose/user')
 const Topic = require('../models/mongoose/topic')
-    /* GET topics listing. */
+const likeService = require('../service/like_service')
+const response = require('../util/reponse')
+
+//get/post topic
 router.route('/')
     .get((req, res, next) => {
         (async() => {
@@ -40,6 +43,8 @@ router.route('/')
                 next(e)
             })
     })
+
+//get/modefied topic by id
 router.route('/:id')
     .get((req, res, next) => {
         (async() => {
@@ -76,6 +81,39 @@ router.route('/:id')
                 next(e)
             })
     })
+router.route('/:id/like')
+    .patch((req, res, next) => {
+        (async() => {
+            let user = await User.getUserById(req.body.userId)
+            await likeService.likeTopic(user._id, req.param.id)
+            return {
+                code: 0
+            }
+        })()
+        .then(r => {
+                res.data = r
+                response(req, res, next)
+            })
+            .catch(e => {
+                next(e)
+            })
+    })
+    .delete((req, res, next) => {
+        (async() => {
+            let user = await User.getUserById(req.body.userId)
+            await likeService.likeTopic(user._id, req.param.id)
+            return {
+                code: 0
+            }
+        })()
+        .then(r => {
+                res.data = r
+                response(req, res, next)
+            })
+            .catch(e => {
+                next(e)
+            })
+    })
 router.route('/:id/reply')
     .post((req, res, next) => {
         (async() => {
@@ -92,6 +130,39 @@ router.route('/:id/reply')
         })()
         .then(r => {
                 res.json(r)
+            })
+            .catch(e => {
+                next(e)
+            })
+    })
+router.route('/:id/reply/:replyId/like')
+    .patch((req, res, next) => {
+        (async() => {
+            let user = await User.getUserById(req.body.userId)
+            await likeService.likeReply(user._id, req.param.replyId)
+            return {
+                code: 0
+            }
+        })()
+        .then(r => {
+                res.data = r
+                response(req, res, next)
+            })
+            .catch(e => {
+                next(e)
+            })
+    })
+    .delete((req, res, next) => {
+        (async() => {
+            let user = await User.getUserById(req.body.userId)
+            await likeService.dislikeReply(user._id, req.param.replyId)
+            return {
+                code: 0
+            }
+        })()
+        .then(r => {
+                res.data = r
+                response(req, res, next)
             })
             .catch(e => {
                 next(e)
