@@ -1,6 +1,6 @@
-const Radis = require('ioredis')
+const Redis = require('ioredis')
 
-let redis = new redis({
+let redis = new Redis({
     host: 'localhost',
     port: 6379
 })
